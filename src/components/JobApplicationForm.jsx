@@ -35,7 +35,7 @@ const JobApplicationForm = () => {
   const [sameAsPermanent, setSameAsPermanent] = useState(false);
 
   const [workExperiences, setWorkExperiences] = useState([
-    { company: '', jobTitle: '', duration: '', freelancing: '', description: '' }
+    { company: '', jobTitle: '', startDate: '', endDate: '', currentlyWorking: false, department: '', otherDepartment: '', freelancing: '', description: '' }
   ]);
 
   const [educations, setEducations] = useState([
@@ -106,7 +106,7 @@ const JobApplicationForm = () => {
   };
 
   const addExperience = () => {
-    setWorkExperiences([...workExperiences, { company: '', jobTitle: '', duration: '', freelancing: '', description: '' }]);
+    setWorkExperiences([...workExperiences, { company: '', jobTitle: '', startDate: '', endDate: '', currentlyWorking: false, department: '', otherDepartment: '', freelancing: '', description: '' }]);
   };
 
   const removeExperience = (index) => {
@@ -213,7 +213,7 @@ const JobApplicationForm = () => {
           linkedIn: '',
           portfolio: ''
         });
-        setWorkExperiences([{ company: '', jobTitle: '', duration: '', freelancing: '', description: '' }]);
+        setWorkExperiences([{ company: '', jobTitle: '', startDate: '', endDate: '', currentlyWorking: false, department: '', otherDepartment: '', freelancing: '', description: '' }]);
         setEducations([{ education: '', otherEducation: '', stream: '', otherStream: '', course: '', branch: '', otherBranch: '', schoolName: '', percentage: '', duration: '', passingYear: '' }]);
         setSubmitted(false);
       }, 3000);
@@ -801,20 +801,92 @@ const JobApplicationForm = () => {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor={`duration_${index}`}>
-                  Duration
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor={`startDate_${index}`}>
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    id={`startDate_${index}`}
+                    value={exp.startDate}
+                    onChange={(e) => handleExperienceChange(index, 'startDate', e.target.value)}
+                    className={errors[`experience_${index}_startDate`] ? 'error' : ''}
+                  />
+                  {errors[`experience_${index}_startDate`] && (
+                    <span className="error-message">{errors[`experience_${index}_startDate`]}</span>
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor={`endDate_${index}`}>
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    id={`endDate_${index}`}
+                    value={exp.endDate}
+                    onChange={(e) => handleExperienceChange(index, 'endDate', e.target.value)}
+                    disabled={exp.currentlyWorking}
+                    className={errors[`experience_${index}_endDate`] ? 'error' : ''}
+                  />
+                  {errors[`experience_${index}_endDate`] && (
+                    <span className="error-message">{errors[`experience_${index}_endDate`]}</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '14px' }}>
+                  <input
+                    type="checkbox"
+                    checked={exp.currentlyWorking || false}
+                    onChange={(e) => {
+                      handleExperienceChange(index, 'currentlyWorking', e.target.checked);
+                      if (e.target.checked) {
+                        handleExperienceChange(index, 'endDate', '');
+                      }
+                    }}
+                    style={{ marginRight: '8px', cursor: 'pointer', width: '16px', height: '16px' }}
+                  />
+                  Currently working here
                 </label>
-                <input
-                  type="text"
-                  id={`duration_${index}`}
-                  value={exp.duration}
-                  onChange={(e) => handleExperienceChange(index, 'duration', e.target.value)}
-                  placeholder="e.g., Jan 2020 - Dec 2022 or 2 years 3 months"
-                  className={errors[`experience_${index}_duration`] ? 'error' : ''}
-                />
-                {errors[`experience_${index}_duration`] && (
-                  <span className="error-message">{errors[`experience_${index}_duration`]}</span>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor={`department_${index}`}>
+                    Department/Sector
+                  </label>
+                  <select
+                    id={`department_${index}`}
+                    value={exp.department || ''}
+                    onChange={(e) => handleExperienceChange(index, 'department', e.target.value)}
+                  >
+                    <option value="">Select Department</option>
+                    <option value="government">Government Sector</option>
+                    <option value="contract">Contract Base</option>
+                    <option value="private">Private</option>
+                    <option value="psu">PSU (Public Sector Undertaking)</option>
+                    <option value="ngo">NGO</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                {exp.department === 'other' && (
+                  <div className="form-group">
+                    <label htmlFor={`otherDepartment_${index}`}>
+                      Specify Department
+                    </label>
+                    <input
+                      type="text"
+                      id={`otherDepartment_${index}`}
+                      value={exp.otherDepartment || ''}
+                      onChange={(e) => handleExperienceChange(index, 'otherDepartment', e.target.value)}
+                      placeholder="Enter department type"
+                      className="other-input"
+                    />
+                  </div>
                 )}
               </div>
 
