@@ -4,8 +4,15 @@ import './JobApplicationForm.css';
 const JobApplicationForm = () => {
   const [formData, setFormData] = useState({
     fullName: '',
+    fatherName: '',
     email: '',
     phone: '',
+    currentAddress: '',
+    currentCity: '',
+    currentState: '',
+    permanentAddress: '',
+    permanentCity: '',
+    permanentState: '',
     position: '',
     experience: '',
     otherExperience: '',
@@ -25,8 +32,10 @@ const JobApplicationForm = () => {
     portfolio: ''
   });
 
+  const [sameAsPermanent, setSameAsPermanent] = useState(false);
+
   const [workExperiences, setWorkExperiences] = useState([
-    { company: '', jobTitle: '', duration: '', description: '' }
+    { company: '', jobTitle: '', duration: '', freelancing: '', description: '' }
   ]);
 
   const [educations, setEducations] = useState([
@@ -47,6 +56,20 @@ const JobApplicationForm = () => {
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const handleSameAsPermanent = (e) => {
+    const isChecked = e.target.checked;
+    setSameAsPermanent(isChecked);
+    
+    if (isChecked) {
+      setFormData(prevState => ({
+        ...prevState,
+        currentAddress: prevState.permanentAddress,
+        currentCity: prevState.permanentCity,
+        currentState: prevState.permanentState
+      }));
     }
   };
 
@@ -83,7 +106,7 @@ const JobApplicationForm = () => {
   };
 
   const addExperience = () => {
-    setWorkExperiences([...workExperiences, { company: '', jobTitle: '', duration: '', description: '' }]);
+    setWorkExperiences([...workExperiences, { company: '', jobTitle: '', duration: '', freelancing: '', description: '' }]);
   };
 
   const removeExperience = (index) => {
@@ -163,8 +186,15 @@ const JobApplicationForm = () => {
       setTimeout(() => {
         setFormData({
           fullName: '',
+          fatherName: '',
           email: '',
           phone: '',
+          currentAddress: '',
+          currentCity: '',
+          currentState: '',
+          permanentAddress: '',
+          permanentCity: '',
+          permanentState: '',
           position: '',
           experience: '',
           otherExperience: '',
@@ -183,7 +213,7 @@ const JobApplicationForm = () => {
           linkedIn: '',
           portfolio: ''
         });
-        setWorkExperiences([{ company: '', jobTitle: '', duration: '', description: '' }]);
+        setWorkExperiences([{ company: '', jobTitle: '', duration: '', freelancing: '', description: '' }]);
         setEducations([{ education: '', otherEducation: '', stream: '', otherStream: '', course: '', branch: '', otherBranch: '', schoolName: '', percentage: '', duration: '', passingYear: '' }]);
         setSubmitted(false);
       }, 3000);
@@ -230,6 +260,20 @@ const JobApplicationForm = () => {
             {errors.fullName && <span className="error-message">{errors.fullName}</span>}
           </div>
 
+          <div className="form-group">
+            <label htmlFor="fatherName">
+              Father Name
+            </label>
+            <input
+              type="text"
+              id="fatherName"
+              name="fatherName"
+              value={formData.fatherName}
+              onChange={handleChange}
+              placeholder="Father's full name"
+            />
+          </div>
+
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="email">
@@ -261,6 +305,113 @@ const JobApplicationForm = () => {
                 className={errors.phone ? 'error' : ''}
               />
               {errors.phone && <span className="error-message">{errors.phone}</span>}
+            </div>
+          </div>
+
+          <h3 style={{ color: '#667eea', fontSize: '18px', marginTop: '20px', marginBottom: '15px' }}>Permanent Address</h3>
+          
+          <div className="form-group">
+            <label htmlFor="permanentAddress">
+              Address
+            </label>
+            <input
+              type="text"
+              id="permanentAddress"
+              name="permanentAddress"
+              value={formData.permanentAddress}
+              onChange={handleChange}
+              placeholder="Street address, apartment, suite, etc."
+            />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="permanentCity">
+                City
+              </label>
+              <input
+                type="text"
+                id="permanentCity"
+                name="permanentCity"
+                value={formData.permanentCity}
+                onChange={handleChange}
+                placeholder="e.g., Pune"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="permanentState">
+                State
+              </label>
+              <input
+                type="text"
+                id="permanentState"
+                name="permanentState"
+                value={formData.permanentState}
+                onChange={handleChange}
+                placeholder="e.g., Maharashtra"
+              />
+            </div>
+          </div>
+
+          <h3 style={{ color: '#667eea', fontSize: '18px', marginTop: '20px', marginBottom: '15px' }}>Current Address</h3>
+          
+          <div className="form-group" style={{ marginBottom: '15px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '14px' }}>
+              <input
+                type="checkbox"
+                checked={sameAsPermanent}
+                onChange={handleSameAsPermanent}
+                style={{ marginRight: '8px', cursor: 'pointer', width: '16px', height: '16px' }}
+              />
+              Same as Permanent Address
+            </label>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="currentAddress">
+              Address
+            </label>
+            <input
+              type="text"
+              id="currentAddress"
+              name="currentAddress"
+              value={formData.currentAddress}
+              onChange={handleChange}
+              placeholder="Street address, apartment, suite, etc."
+              disabled={sameAsPermanent}
+            />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="currentCity">
+                City
+              </label>
+              <input
+                type="text"
+                id="currentCity"
+                name="currentCity"
+                value={formData.currentCity}
+                onChange={handleChange}
+                placeholder="e.g., Mumbai"
+                disabled={sameAsPermanent}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="currentState">
+                State
+              </label>
+              <input
+                type="text"
+                id="currentState"
+                name="currentState"
+                value={formData.currentState}
+                onChange={handleChange}
+                placeholder="e.g., Maharashtra"
+                disabled={sameAsPermanent}
+              />
             </div>
           </div>
         </div>
@@ -665,6 +816,21 @@ const JobApplicationForm = () => {
                 {errors[`experience_${index}_duration`] && (
                   <span className="error-message">{errors[`experience_${index}_duration`]}</span>
                 )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor={`freelancing_${index}`}>
+                  Freelancing Experience
+                </label>
+                <select
+                  id={`freelancing_${index}`}
+                  value={exp.freelancing || ''}
+                  onChange={(e) => handleExperienceChange(index, 'freelancing', e.target.value)}
+                >
+                  <option value="">Select</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
               </div>
 
               <div className="form-group">
