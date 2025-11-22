@@ -29,6 +29,10 @@ const JobApplicationForm = () => {
     { company: '', jobTitle: '', duration: '', description: '' }
   ]);
 
+  const [educations, setEducations] = useState([
+    { education: '', otherEducation: '', stream: '', otherStream: '', course: '', branch: '', otherBranch: '', schoolName: '', percentage: '', duration: '', passingYear: '' }
+  ]);
+
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -97,6 +101,28 @@ const JobApplicationForm = () => {
     }
   };
 
+  const handleEducationChange = (index, field, value) => {
+    const updatedEducations = [...educations];
+    updatedEducations[index][field] = value;
+    // Reset branch and otherBranch when education changes
+    if (field === 'education') {
+      updatedEducations[index].branch = '';
+      updatedEducations[index].otherBranch = '';
+    }
+    setEducations(updatedEducations);
+  };
+
+  const addEducation = () => {
+    setEducations([...educations, { education: '', otherEducation: '', stream: '', otherStream: '', course: '', branch: '', otherBranch: '', schoolName: '', percentage: '', duration: '', passingYear: '' }]);
+  };
+
+  const removeEducation = (index) => {
+    if (educations.length > 1) {
+      const updatedEducations = educations.filter((_, i) => i !== index);
+      setEducations(updatedEducations);
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -130,6 +156,7 @@ const JobApplicationForm = () => {
       // Form is valid, submit data
       console.log('Form submitted successfully:', formData);
       console.log('Work Experiences:', workExperiences);
+      console.log('Educations:', educations);
       setSubmitted(true);
       
       // Reset form after 3 seconds
@@ -157,6 +184,7 @@ const JobApplicationForm = () => {
           portfolio: ''
         });
         setWorkExperiences([{ company: '', jobTitle: '', duration: '', description: '' }]);
+        setEducations([{ education: '', otherEducation: '', stream: '', otherStream: '', course: '', branch: '', otherBranch: '', schoolName: '', percentage: '', duration: '', passingYear: '' }]);
         setSubmitted(false);
       }, 3000);
     } else {
@@ -237,6 +265,234 @@ const JobApplicationForm = () => {
           </div>
         </div>
 
+        {/* Education Details Section */}
+        <div className="form-section">
+          <h2>Education Details</h2>
+          <p className="section-description">Add your educational qualifications</p>
+          
+          {educations.map((edu, index) => (
+            <div key={index} className="experience-entry">
+              <div className="experience-header">
+                <h3>Education {index + 1}</h3>
+                {educations.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeEducation(index)}
+                    className="remove-button"
+                  >
+                    ✕ Remove
+                  </button>
+                )}
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor={`education_${index}`}>
+                    Highest Education
+                  </label>
+                  <select
+                    id={`education_${index}`}
+                    value={edu.education}
+                    onChange={(e) => handleEducationChange(index, 'education', e.target.value)}
+                  >
+                    <option value="">Select education</option>
+                    <option value="10th">10th Grade</option>
+                    <option value="12th">12th Grade</option>
+                    <option value="iti">ITI</option>
+                    <option value="diploma">Diploma</option>
+                    <option value="btech">B.Tech</option>
+                    <option value="bachelor">Bachelor's Degree</option>
+                    <option value="master">Master's Degree</option>
+                    <option value="phd">PhD</option>
+                    <option value="other">Other</option>
+                  </select>
+                  {edu.education === 'other' && (
+                    <input
+                      type="text"
+                      value={edu.otherEducation}
+                      onChange={(e) => handleEducationChange(index, 'otherEducation', e.target.value)}
+                      placeholder="Please specify education"
+                      className="other-input"
+                    />
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor={`stream_${index}`}>
+                    Stream
+                  </label>
+                  <select
+                    id={`stream_${index}`}
+                    value={edu.stream}
+                    onChange={(e) => handleEducationChange(index, 'stream', e.target.value)}
+                  >
+                    <option value="">Select stream</option>
+                    <option value="science">Science</option>
+                    <option value="commerce">Commerce</option>
+                    <option value="arts">Arts</option>
+                    <option value="engineering">Engineering</option>
+                    <option value="medical">Medical</option>
+                    <option value="management">Management</option>
+                    <option value="law">Law</option>
+                    <option value="computer-science">Computer Science</option>
+                    <option value="other">Other</option>
+                  </select>
+                  {edu.stream === 'other' && (
+                    <input
+                      type="text"
+                      value={edu.otherStream}
+                      onChange={(e) => handleEducationChange(index, 'otherStream', e.target.value)}
+                      placeholder="Please specify stream"
+                      className="other-input"
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor={`course_${index}`}>
+                  Course/Specialization
+                </label>
+                <input
+                  type="text"
+                  id={`course_${index}`}
+                  value={edu.course}
+                  onChange={(e) => handleEducationChange(index, 'course', e.target.value)}
+                  placeholder="e.g., Computer Engineering, MBA, B.Sc Physics"
+                />
+              </div>
+
+              {/* Branch Field - Shows only for B.Tech, Diploma, ITI */}
+              {(edu.education === 'btech' || edu.education === 'diploma' || edu.education === 'iti') && (
+                <div className="form-group">
+                  <label htmlFor={`branch_${index}`}>
+                    Branch/Trade
+                  </label>
+                  <select
+                    id={`branch_${index}`}
+                    value={edu.branch}
+                    onChange={(e) => handleEducationChange(index, 'branch', e.target.value)}
+                  >
+                    <option value="">Select branch</option>
+                    {edu.education === 'btech' && (
+                      <>
+                        <option value="computer-engineering">Computer Engineering</option>
+                        <option value="information-technology">Information Technology</option>
+                        <option value="electronics-communication">Electronics & Communication</option>
+                        <option value="electrical-engineering">Electrical Engineering</option>
+                        <option value="mechanical-engineering">Mechanical Engineering</option>
+                        <option value="civil-engineering">Civil Engineering</option>
+                        <option value="chemical-engineering">Chemical Engineering</option>
+                        <option value="biotechnology">Biotechnology</option>
+                        <option value="aerospace-engineering">Aerospace Engineering</option>
+                        <option value="automobile-engineering">Automobile Engineering</option>
+                        <option value="other">Other</option>
+                      </>
+                    )}
+                    {edu.education === 'diploma' && (
+                      <>
+                        <option value="computer-engineering">Computer Engineering</option>
+                        <option value="information-technology">Information Technology</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="electrical">Electrical</option>
+                        <option value="mechanical">Mechanical</option>
+                        <option value="civil">Civil</option>
+                        <option value="automobile">Automobile</option>
+                        <option value="textile">Textile</option>
+                        <option value="chemical">Chemical</option>
+                        <option value="other">Other</option>
+                      </>
+                    )}
+                    {edu.education === 'iti' && (
+                      <>
+                        <option value="electrician">Electrician</option>
+                        <option value="fitter">Fitter</option>
+                        <option value="welder">Welder</option>
+                        <option value="turner">Turner</option>
+                        <option value="machinist">Machinist</option>
+                        <option value="electronics-mechanic">Electronics Mechanic</option>
+                        <option value="copa">COPA (Computer Operator & Programming Assistant)</option>
+                        <option value="mechanic-motor-vehicle">Mechanic Motor Vehicle</option>
+                        <option value="plumber">Plumber</option>
+                        <option value="carpenter">Carpenter</option>
+                        <option value="draughtsman">Draughtsman (Civil/Mechanical)</option>
+                        <option value="other">Other</option>
+                      </>
+                    )}
+                  </select>
+                  {edu.branch === 'other' && (
+                    <input
+                      type="text"
+                      value={edu.otherBranch}
+                      onChange={(e) => handleEducationChange(index, 'otherBranch', e.target.value)}
+                      placeholder="Please specify branch/trade"
+                      className="other-input"
+                    />
+                  )}
+                </div>
+              )}
+
+              <div className="form-group">
+                <label htmlFor={`schoolName_${index}`}>
+                  School/College/Institute Name
+                </label>
+                <input
+                  type="text"
+                  id={`schoolName_${index}`}
+                  value={edu.schoolName}
+                  onChange={(e) => handleEducationChange(index, 'schoolName', e.target.value)}
+                  placeholder="e.g., ABC College of Engineering"
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor={`percentage_${index}`}>
+                    Percentage/CGPA
+                  </label>
+                  <input
+                    type="text"
+                    id={`percentage_${index}`}
+                    value={edu.percentage}
+                    onChange={(e) => handleEducationChange(index, 'percentage', e.target.value)}
+                    placeholder="e.g., 85% or 8.5 CGPA"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor={`passingYear_${index}`}>
+                    Passing Year
+                  </label>
+                  <input
+                    type="text"
+                    id={`passingYear_${index}`}
+                    value={edu.passingYear}
+                    onChange={(e) => handleEducationChange(index, 'passingYear', e.target.value)}
+                    placeholder="e.g., 2023"
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor={`duration_${index}`}>
+                  Duration
+                </label>
+                <input
+                  type="text"
+                  id={`duration_${index}`}
+                  value={edu.duration}
+                  onChange={(e) => handleEducationChange(index, 'duration', e.target.value)}
+                  placeholder="e.g., 2019 - 2023 or 4 years"
+                />
+              </div>
+            </div>
+          ))}
+
+          <button type="button" onClick={addEducation} className="add-experience-button">
+            + Add Another Education
+          </button>
+        </div>
+
         {/* Job Details Section */}
         <div className="form-section">
           <h2>Job Details</h2>
@@ -291,170 +547,6 @@ const JobApplicationForm = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="education">
-                Highest Education
-              </label>
-              <select
-                id="education"
-                name="education"
-                value={formData.education}
-                onChange={handleChange}
-                className={errors.education ? 'error' : ''}
-              >
-                <option value="">Select education</option>
-                <option value="10th">10th Grade</option>
-                <option value="12th">12th Grade</option>
-                <option value="iti">ITI</option>
-                <option value="diploma">Diploma</option>
-                <option value="btech">B.Tech</option>
-                <option value="bachelor">Bachelor's Degree</option>
-                <option value="master">Master's Degree</option>
-                <option value="phd">PhD</option>
-                <option value="other">Other</option>
-              </select>
-              {errors.education && <span className="error-message">{errors.education}</span>}
-              {formData.education === 'other' && (
-                <input
-                  type="text"
-                  name="otherEducation"
-                  value={formData.otherEducation}
-                  onChange={handleChange}
-                  placeholder="Please specify education"
-                  className="other-input"
-                />
-              )}
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="stream">
-                Stream
-              </label>
-              <select
-                id="stream"
-                name="stream"
-                value={formData.stream}
-                onChange={handleChange}
-                className={errors.stream ? 'error' : ''}
-              >
-                <option value="">Select stream</option>
-                <option value="science">Science</option>
-                <option value="commerce">Commerce</option>
-                <option value="arts">Arts</option>
-                <option value="engineering">Engineering</option>
-                <option value="medical">Medical</option>
-                <option value="management">Management</option>
-                <option value="law">Law</option>
-                <option value="computer-science">Computer Science</option>
-                <option value="other">Other</option>
-              </select>
-              {errors.stream && <span className="error-message">{errors.stream}</span>}
-              {formData.stream === 'other' && (
-                <input
-                  type="text"
-                  name="otherStream"
-                  value={formData.otherStream}
-                  onChange={handleChange}
-                  placeholder="Please specify stream"
-                  className="other-input"
-                />
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="course">
-                Course/Specialization
-              </label>
-              <input
-                type="text"
-                id="course"
-                name="course"
-                value={formData.course}
-                onChange={handleChange}
-                placeholder="e.g., Computer Engineering, MBA, B.Sc Physics"
-                className={errors.course ? 'error' : ''}
-              />
-              {errors.course && <span className="error-message">{errors.course}</span>}
-            </div>
-          </div>
-
-          {/* Branch Field - Shows only for B.Tech, Diploma, ITI */}
-          {(formData.education === 'btech' || formData.education === 'diploma' || formData.education === 'iti') && (
-            <div className="form-group">
-              <label htmlFor="branch">
-                Branch/Trade
-              </label>
-              <select
-                id="branch"
-                name="branch"
-                value={formData.branch}
-                onChange={handleChange}
-                className={errors.branch ? 'error' : ''}
-              >
-                <option value="">Select branch</option>
-                {formData.education === 'btech' && (
-                  <>
-                    <option value="computer-engineering">Computer Engineering</option>
-                    <option value="information-technology">Information Technology</option>
-                    <option value="electronics-communication">Electronics & Communication</option>
-                    <option value="electrical-engineering">Electrical Engineering</option>
-                    <option value="mechanical-engineering">Mechanical Engineering</option>
-                    <option value="civil-engineering">Civil Engineering</option>
-                    <option value="chemical-engineering">Chemical Engineering</option>
-                    <option value="biotechnology">Biotechnology</option>
-                    <option value="aerospace-engineering">Aerospace Engineering</option>
-                    <option value="automobile-engineering">Automobile Engineering</option>
-                    <option value="other">Other</option>
-                  </>
-                )}
-                {formData.education === 'diploma' && (
-                  <>
-                    <option value="computer-engineering">Computer Engineering</option>
-                    <option value="information-technology">Information Technology</option>
-                    <option value="electronics">Electronics</option>
-                    <option value="electrical">Electrical</option>
-                    <option value="mechanical">Mechanical</option>
-                    <option value="civil">Civil</option>
-                    <option value="automobile">Automobile</option>
-                    <option value="textile">Textile</option>
-                    <option value="chemical">Chemical</option>
-                    <option value="other">Other</option>
-                  </>
-                )}
-                {formData.education === 'iti' && (
-                  <>
-                    <option value="electrician">Electrician</option>
-                    <option value="fitter">Fitter</option>
-                    <option value="welder">Welder</option>
-                    <option value="turner">Turner</option>
-                    <option value="machinist">Machinist</option>
-                    <option value="electronics-mechanic">Electronics Mechanic</option>
-                    <option value="copa">COPA (Computer Operator & Programming Assistant)</option>
-                    <option value="mechanic-motor-vehicle">Mechanic Motor Vehicle</option>
-                    <option value="plumber">Plumber</option>
-                    <option value="carpenter">Carpenter</option>
-                    <option value="draughtsman">Draughtsman (Civil/Mechanical)</option>
-                    <option value="other">Other</option>
-                  </>
-                )}
-              </select>
-              {errors.branch && <span className="error-message">{errors.branch}</span>}
-              {formData.branch === 'other' && (
-                <input
-                  type="text"
-                  name="otherBranch"
-                  value={formData.otherBranch}
-                  onChange={handleChange}
-                  placeholder="Please specify branch/trade"
-                  className="other-input"
-                />
-              )}
-            </div>
-          )}
-
-          <div className="form-row">
-            <div className="form-group">
               <label htmlFor="availability">
                 Availability
               </label>
@@ -485,20 +577,20 @@ const JobApplicationForm = () => {
                 />
               )}
             </div>
+          </div>
 
-            <div className="form-group">
-              <label htmlFor="expectedSalary">
-                Expected Salary (Optional)
-              </label>
-              <input
-                type="text"
-                id="expectedSalary"
-                name="expectedSalary"
-                value={formData.expectedSalary}
-                onChange={handleChange}
-                placeholder="e.g., $60,000 - $80,000"
-              />
-            </div>
+          <div className="form-group">
+            <label htmlFor="expectedSalary">
+              Expected Salary (Optional)
+            </label>
+            <input
+              type="text"
+              id="expectedSalary"
+              name="expectedSalary"
+              value={formData.expectedSalary}
+              onChange={handleChange}
+              placeholder="e.g., $60,000 - $80,000"
+            />
           </div>
         </div>
 
